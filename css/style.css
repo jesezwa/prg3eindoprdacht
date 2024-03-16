@@ -41,7 +41,7 @@ section.section {
     display: flex;
     align-items: center;
     flex-direction: column;
-    min-width: 340px;
+    max-width: 340px;
     padding: 0.75rem;
     background-color: #F55E5E;
     height: 600px;

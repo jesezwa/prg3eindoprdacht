@@ -2,17 +2,19 @@
 window.addEventListener('load', init);
 let detailSidebar;
 let sidebarToggled;
-let magazineItems = ['benchpress', 'squat', 'deadlift']
 let magazineContainer;
 let removeFavoriteButton;
+let exerciseData = {};
 let favorites = [];
 let url;
+let descriptionSet;
 
 
 console.log('billen');
 function init() {
     // Sidebar standaard uitzetten
     sidebarToggled = false;
+    descriptionSet = false;
     url = 'http://localhost/prg3eindoprdacht/webservice/';
 
     // Haalt de detailsidebar op uit de HTML
@@ -20,13 +22,6 @@ function init() {
 
     magazineContainer = document.querySelector('.item-container')
     magazineContainer.addEventListener('click', itemClickHandler);
-
-    // de detail knop ophalen
-
-
-    // de favorite knop ophalen
-/*    addToFavoriteButton = document.querySelector('.favorite-button');
-    addToFavoriteButton.addEventListener('click', addToFavorite)*/
 
     ajaxRequest(url, createMagazineItems);
 
@@ -52,38 +47,47 @@ console.log(error);
 }
 
 function itemClickHandler(e){
-    let clickedItem = e.target;
-    console.log(clickedItem);
+    let clickedButton = e.target;
+    console.log(clickedButton);
 
-    if (clickedItem.classList.contains('details-button')){
-        showSidebar();
+    if (clickedButton.classList.contains('details-button')){
+        const exerciseId = clickedButton.closest('.column').dataset.id;
+        ajaxRequest(`${url}?id=${exerciseId}`, fillSidebar);
+        showSidebar(clickedButton);
+
     }
 
-    if (clickedItem.classList.contains('favorite-button')){
-        addToFavorite(clickedItem);
+    if (clickedButton.classList.contains('favorite-button')){
+        addToFavorite(clickedButton);
     }
 
-    if (clickedItem.classList.contains('remove-favorite')){
-        removeFromFavorite(clickedItem);
+    if (clickedButton.classList.contains('remove-favorite')){
+        removeFromFavorite(clickedButton);
     }
 }
 
 function createMagazineItems(data){
     console.log(data);
+
     for (const item of data){
 
         // Het aanmaken van het vakje die de content gaat bevatten
         let magazineItem = document.createElement('div')
         magazineItem.classList.add('column', 'is-one-quarter');
-        magazineItem.dataset.name = item.id;
+        magazineItem.dataset.id = item.id;
+
+        exerciseData[item.id] = item;
+
+
 
         magazineContainer.appendChild(magazineItem)
         fillMagazineItems(item)
     }
+
 }
 
 function fillMagazineItems(item){
-    const magazineItem = document.querySelector(`.column[data-name='${item.id}']`);
+    const magazineItem = document.querySelector(`.column[data-id='${item.id}']`);
 
     // Het invoegen van de title
     let itemTitle = document.createElement('p');
@@ -111,56 +115,54 @@ function fillMagazineItems(item){
     magazineItem.appendChild(detailButton);
     magazineItem.appendChild(favoriteButton);
 
+    console.log(exerciseData);
+
 
 }
 
 
 
-function showSidebar() {
+function showSidebar(clickedButton) {
 
 
         if (sidebarToggled !== true) {
             sidebarToggled = true;
             detailSidebar.classList.add('details');
-            fillSidebar();
+            fillSidebar(clickedButton);
         } else {
-        fillSidebar()
+        fillSidebar(clickedButton)
         }
 }
 
 
-function fillSidebar(clickedItem){
+function addToFavorite(clickedButton) {
+
+    console.log(clickedButton)
+
+    let item = clickedButton.closest('.column').dataset.id
+
+    let magazineItem = document.querySelector(`.column[data-id='${item}']`)
+
+    removeFavoriteButton = document.createElement('button');
+    removeFavoriteButton.classList.add('remove-favorite', 'button', 'mt-2')
+    removeFavoriteButton.innerHTML = 'Remove from favorites';
+
+
+    magazineItem.appendChild(removeFavoriteButton);
+
+
+    magazineItem.classList.add('favorite')
+
+    clickedButton.remove();
+
 
 }
 
-function addToFavorite(clickedItem){
+function removeFromFavorite(clickedButton) {
 
-console.log(clickedItem)
+    let item = clickedButton.closest('.column').dataset.id
 
-    let item = clickedItem.closest('.column').dataset.name
-
-     let magazineItem = document.querySelector(`.column[data-name='${item}']`)
-
-        removeFavoriteButton = document.createElement('button');
-        removeFavoriteButton.classList.add('remove-favorite', 'button', 'mt-2')
-        removeFavoriteButton.innerHTML = 'Remove from favorites';
-
-
-        magazineItem.appendChild(removeFavoriteButton);
-
-
-        magazineItem.classList.add('favorite')
-
-        clickedItem.remove();
-
-        addToLocalStorage(item);
-}
-
-function removeFromFavorite(clickedItem){
-
-    let item = clickedItem.closest('.column').dataset.name
-
-    let magazineItem = document.querySelector(`.column[data-name='${item}']`)
+    let magazineItem = document.querySelector(`.column[data-id='${item}']`)
 
     let favoriteButton = document.createElement('button');
     favoriteButton.classList.add('button', 'mt-2', 'favorite-button');
@@ -170,12 +172,32 @@ function removeFromFavorite(clickedItem){
     magazineItem.appendChild(favoriteButton);
 
     magazineItem.classList.remove('favorite');
-    clickedItem.remove();
-    removeFromLocalStorage(item);
+    clickedButton.remove();
+
 
 }
 
-function addToLocalStorage(item){
+
+
+function fillSidebar(data) {
+    if (data) {
+    if (descriptionSet === false) {
+        descriptionSet = true;
+        let description = document.createElement('p');
+        description.innerHTML = data.Description;
+
+        detailSidebar.appendChild(description);
+    } else {
+        let description = detailSidebar.querySelector('p');
+        description.innerHTML = data.Description;
+    }
+
+    }
+
+
+}
+
+/*function addToLocalStorage(item){
     favorites.push(item);
     localStorage.setItem('favorites', JSON.stringify(favorites));
 }
@@ -183,7 +205,7 @@ function addToLocalStorage(item){
 function removeFromLocalStorage(item){
     favorites.splice();
     localStorage.setItem('favorites', JSON.stringify(favorites));
-}
+}*/
 
 
 
