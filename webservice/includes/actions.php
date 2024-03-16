@@ -7,31 +7,34 @@ function getExercises()
     return [
         [
             "id" => 1,
-            "name" => "Benchpress"
+            "name" => "Benchpress",
+            "img" => "img/benchpress.png"
 
         ],
         [
             "id" => 2,
-            "name" => "Lateral raises"
-
+            "name" => "Lateral raises",
+            "img" => "img/lateral_raises.png"
         ],
         [
             "id" => 3,
-            "name" => "Bicep curls"
+            "name" => "Bicep curls",
+            "img" => "img/bicep_curls.png"
         ],
         [
             "id" => 4,
-            "name" => "Tricep pushdown"
+            "name" => "Tricep pushdown",
+            "img" => "img/tricep_pushdown.png"
         ],
         [
             "id" => 5,
-            "name" => "Sumo deadlift"
-
+            "name" => "Sumo deadlift",
+            "img" => "img/sumo_deadlift.png"
         ],
         [
-        "id" => 6,
-        "name" => "Squats"
-
+            "id" => 6,
+            "name" => "Squats",
+            "img" => "img/squat.png"
         ]
     ];
 }
@@ -79,7 +82,7 @@ function getExerciseDetails($id)
                                 from the traditional deadlift by assuming a wider stance, primarily engaging the glutes, hamstrings, 
                                 lower back, and quadriceps for comprehensive lower body strength and muscle growth.",
             "tags" => ['Hamstrings', 'Lower back', 'Quadriceps', 'Powerlifting', 'Lowerbody', 'Upperbody']
-        ],
+        ]
     ];
 
     return $tags[$id];
